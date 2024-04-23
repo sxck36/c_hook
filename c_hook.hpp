@@ -78,7 +78,7 @@ class c_hooks
 {
 public:
 	// init minhook
-    static void init( );
+    static bool init( );
 	// create hook and insert it into manager, optionally enables it directly
     static std::optional<c_hook*> create( const std::string& name, c_hook* hook, const bool enable = false );
 	// enable all hooks ( won't continue if one fails to enable )

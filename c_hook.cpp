@@ -74,9 +74,16 @@ std::string c_hook::error( )
 
 std::unordered_map<std::string, c_hook*> m_hooks;
 
-void c_hooks::init( )
+bool c_hooks::init( )
 {
-	MH_Initialize( );
+	MH_STATUS status = MH_Initialize( );
+	if (status != MH_OK)
+	{
+		c_print( "c_hooks >> Failed to init, error: %s\n", MH_StatusToString( status ) );
+		return false;
+	}
+
+	return true;
 }
 
 std::optional<c_hook*> c_hooks::create( const std::string& name, c_hook* hook, const bool enable )
@@ -89,13 +96,13 @@ std::optional<c_hook*> c_hooks::create( const std::string& name, c_hook* hook, c
 	{
 		if (!hook->created( ))
 		{
-			c_print( "c_hook >> Failed to create hook for: %s, error: %s\n", name.c_str( ), hook->error( ).c_str( ) );
+			c_print( "c_hooks >> Failed to create hook for: %s, error: %s\n", name.c_str( ), hook->error( ).c_str( ) );
 			return nullptr;
 		}
 
 		if (!hook->enable( ))
 		{
-			c_print( "c_hook >> Failed to enable hook for: %s, error: %s\n", name.c_str( ), hook->error( ).c_str( ) );
+			c_print( "c_hooks >> Failed to enable hook for: %s, error: %s\n", name.c_str( ), hook->error( ).c_str( ) );
 			return nullptr;
 		}
 	}
@@ -113,13 +120,13 @@ bool c_hooks::enable_all( )
 
 		if (!hook->created( ))
 		{
-			c_print( "c_hook >> Failed to create hook for: %s, error: %s\n", name.c_str( ), hook->error( ).c_str( ) );
+			c_print( "c_hooks >> Failed to create hook for: %s, error: %s\n", name.c_str( ), hook->error( ).c_str( ) );
 			return false;
 		}
 
 		if (!hook->enable( ))
 		{
-			c_print( "c_hook >> Failed to enable hook for: %s, error: %s\n", name.c_str( ), hook->error( ).c_str( ) );
+			c_print( "c_hooks >> Failed to enable hook for: %s, error: %s\n", name.c_str( ), hook->error( ).c_str( ) );
 			return false;
 		}
 	}
@@ -138,7 +145,7 @@ bool c_hooks::disable_all( )
 
 		if (!hook->disable( ))
 		{
-			c_print( "c_hook >> Failed to disable hook for: %s, error: %s\n", name.c_str( ), hook->error( ).c_str( ) );
+			c_print( "c_hooks >> Failed to disable hook for: %s, error: %s\n", name.c_str( ), hook->error( ).c_str( ) );
 			return false;
 		}
 	}
@@ -156,7 +163,7 @@ bool c_hooks::remove( const std::string& name, const bool disable = false )
 		auto hook = it->second;
 		if (!hook->disable( ))
 		{
-			c_print( "c_hook >> Failed to disable/remove hook for: %s, error: %s\n", name.c_str( ), hook->error( ).c_str( ) );
+			c_print( "c_hooks >> Failed to disable/remove hook for: %s, error: %s\n", name.c_str( ), hook->error( ).c_str( ) );
 			return false;
 		}
 	}
