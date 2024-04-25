@@ -72,7 +72,7 @@ std::string c_hook::error( )
 
 #pragma region c_hooks
 
-std::unordered_map<std::string, c_hook*> m_hooks;
+std::unordered_map<std::string, c_hook*> c_hooks::m_hooks;
 
 bool c_hooks::init( )
 {
@@ -152,7 +152,7 @@ bool c_hooks::disable_all( )
 	return true;
 }
 
-bool c_hooks::remove( const std::string& name, const bool disable = false )
+bool c_hooks::remove( const std::string& name, const bool disable )
 {
 	auto it = m_hooks.find( name );
 	if (it == m_hooks.end( ))
@@ -167,6 +167,8 @@ bool c_hooks::remove( const std::string& name, const bool disable = false )
 			return false;
 		}
 	}
+
+	delete it->second;
 
 	m_hooks.erase( it );
 	return true;
