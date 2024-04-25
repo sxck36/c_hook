@@ -97,12 +97,14 @@ std::optional<c_hook*> c_hooks::create( const std::string& name, c_hook* hook, c
 		if (!hook->created( ))
 		{
 			c_print( "c_hooks >> Failed to create hook for: %s, error: %s\n", name.c_str( ), hook->error( ).c_str( ) );
+			delete hook;
 			return nullptr;
 		}
 
 		if (!hook->enable( ))
 		{
 			c_print( "c_hooks >> Failed to enable hook for: %s, error: %s\n", name.c_str( ), hook->error( ).c_str( ) );
+			delete hook;
 			return nullptr;
 		}
 	}
