@@ -35,6 +35,8 @@ public:
 	bool enable( );
 	// disable the hook
 	bool disable( );
+	// removes hook from minhook
+	bool remove( );
 	// return last error as string
 	std::string error( );
 
