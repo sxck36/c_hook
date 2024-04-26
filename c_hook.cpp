@@ -62,6 +62,24 @@ bool c_hook::disable( )
 	return true;
 }
 
+bool c_hook::remove( )
+{
+	if (!this->m_created)
+		return true;
+
+	if (this->m_active && !this->disable( ))
+		return false;
+
+	MH_STATUS status = MH_RemoveHook( this->m_target );
+	if (status != MH_OK)
+	{
+		this->m_lasterror = status;
+		return false;
+	}
+
+	return true;
+}
+
 std::string c_hook::error( )
 {
 	return MH_StatusToString( this->m_lasterror );
@@ -165,7 +183,13 @@ bool c_hooks::remove( const std::string& name, const bool disable )
 		auto hook = it->second;
 		if (!hook->disable( ))
 		{
-			c_print( "c_hooks >> Failed to disable/remove hook for: %s, error: %s\n", name.c_str( ), hook->error( ).c_str( ) );
+			c_print( "c_hooks >> Failed to disable hook for: %s, error: %s\n", name.c_str( ), hook->error( ).c_str( ) );
+			return false;
+		}
+
+		if (!hook->remove( ))
+		{
+			c_print( "c_hooks >> Failed to remove hook for: %s, error: %s\n", name.c_str( ), hook->error( ).c_str( ) );
 			return false;
 		}
 	}
